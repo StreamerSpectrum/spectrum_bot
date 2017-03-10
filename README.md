@@ -3,6 +3,9 @@
 This is a Chat and Interactive bot for Beam.pro written in Python
 
 Author: CAPGames
+State : Not a workable state
+
+Target Platforms : Raspberry Pi, Windows
 
 ## Currently Completed
 * Beam OAuth
