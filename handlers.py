@@ -56,7 +56,7 @@ def oauth_handling(account):
         dte = datetime.strptime(db.get_db('accounts', account)[5], '%Y-%m-%d %H:%M:%S.%f')
 
         # Check to see if the OAtuh access token has expired
-        if dtn < dte:
+        if dtn > dte:
             # OAtuh access token has expired then perform a token refresh
             print('Token expired for {acc} account, token refreshing...'.format(acc=account))
             tmp = beamoauth.check(db.get_db('accounts', account)[4])
