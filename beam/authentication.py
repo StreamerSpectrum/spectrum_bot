@@ -10,7 +10,7 @@
 import requests
 
 OATH_TOKEN_URL = 'https://beam.pro/api/v1/oauth/token'
-
+USERS_CURRENT_URL = 'https://beam.pro/api/v1/users/current'
 class OAuth():
     ''' Handles the generatation of a new OAuth access token  '''
 
@@ -26,20 +26,15 @@ class OAuth():
             # retrun a False validity
             return {'error': True,
                     'reason': 'The code entered is the incorrect length'}
-
-        # If there is a key called error in data
         elif  'error' in data:
-            # if there is a key called error_description in data
             if 'error_description' in data:
-                # returns dict for the specific error
                 return {'error': True,
                         'reason': data['error_description']}
             else:
-                # returns dict for the specific error
                 return {'error': True,
                         'reason': 'There was an issue with authorization'}
         else:
-            # return a the token data to get handled
+            # return a True validity along with the token data
             return {'error': False,
                     'access_token': data['access_token'],
                     'refresh_token': data['refresh_token'],
@@ -71,6 +66,17 @@ class OAuth():
         # to be processed
         tmp = requests.post(url=OATH_TOKEN_URL, data=data, headers=header).json()
         return self.generate_dict(tmp)
+
+    def get_userinfo(self, code):
+        ''' gets and returns the user information from beam '''
+
+        # Create Data for request
+        data = dict(client_id=self.client_id)
+        # Creates the header for the request
+        header = {'Media-Type': 'application/json',
+                  'Authorization': 'Bearer ' + code}
+        # Get the request and return the responce
+        return requests.get(url=USERS_CURRENT_URL, data=data, headers=header).json()
 
     def check(self, code):
         ''' Checks the code and determines if to refressh or get a new access token '''

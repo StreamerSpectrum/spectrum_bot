@@ -64,6 +64,17 @@ def oauth_handling(account):
 
 def initialize():
     ''' Checks if the OAuth tokens are expired '''
+    client_id = db.get_db('settings', 'client_id')[1]
+
+    beamoauth = authentication.OAuth(client_id, None)
+
     data = ['main', 'bot']
     for account in data:
+        # Check account access token
         oauth_handling(account)
+
+        # checks user information
+        tmp = db.get_db('accounts', account)
+        if tmp[1] is None or tmp[2] is None or tmp[6] is None:
+            tmp = beamoauth.get_userinfo(tmp[3])
+            db.set_db_userinfo(account, tmp)
