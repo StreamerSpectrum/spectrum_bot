@@ -12,14 +12,11 @@ from beam import authentication
 
 def token_handling(data, account):
     ''' Handles saving the OAuth tokens to the database '''
-    # calculate the expiry data and time of the access token
     tmp = data
     dte = datetime.now() + timedelta(seconds=data['expires_in'])
-    tmp['expires_in'] = dte
-    # save access token data to the database
-    for ids in tmp:
-        if not ids == 'error':
-            db.set_db('account_' + account, "data='" + tmp[ids].__str__() + "'", ids)
+    tmp['expires_in'] = dte.__str__()
+    db.set_db_userdata(account, tmp)
+
 
 def oauth_handling(account):
     ''' Sets up the beam OAuth in the config file '''
@@ -77,14 +74,12 @@ def initialize():
         # Check account access token
         oauth_handling(account)
 
-        # checks if user information is present in the database
+        # checks user information
         if (db.get_db('account_' + account, 'user_id')[1] is None or
                 db.get_db('account_' + account, 'username')[1] is None or
                 db.get_db('account_' + account, 'channel_id')[1] is None):
-            # get account details: userId, username, channel_id
             tmp = beamoauth.get_userinfo(db.get_db('account_' + account, 'access_token')[1])
             user = {'user_id': tmp['channel']['userId'],
                     'username': tmp['username'],
                     'channel_id': tmp['channel']['id']}
-            # save date to the database
-            db.set_db_userinfo(account, user)
+            db.set_db_userdata(account, user)

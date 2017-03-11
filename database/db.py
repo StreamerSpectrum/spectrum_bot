@@ -1,7 +1,7 @@
 ''' handles all the database data flow '''
 
 import sqlite3
-
+from datetime import datetime, timedelta
 CONN = sqlite3.connect('database/db.db')
 
 def get_db(table, data):
@@ -18,7 +18,7 @@ def set_db(table, data, row):
         table=table, data=data, row=row))
     CONN.commit()
 
-def set_db_userinfo(account, data):
+def set_db_userdata(account, data):
     ''' Saves the account information to the database '''
     for ids in data:
         set_db('account_' + account, "data='" + data[ids].__str__() + "'", ids)
