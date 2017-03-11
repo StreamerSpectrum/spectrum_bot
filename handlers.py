@@ -12,11 +12,14 @@ from beam import authentication
 
 def token_handling(data, account):
     ''' Handles saving the OAuth tokens to the database '''
+    # calculate the expiry data and time of the access token
+    tmp = data
     dte = datetime.now() + timedelta(seconds=data['expires_in'])
-    tmp = ("access_token='{a}', ".format(a=data['access_token']) +
-           "refresh_token='{r}', ".format(r=data['refresh_token']) +
-           "token_expire='{e}'".format(e=dte))
-    db.set_db('accounts', tmp, account)
+    tmp['expires_in'] = dte
+    # save access token data to the database
+    for ids in tmp:
+        if not ids == 'error':
+            db.set_db('account_' + account, "data='" + tmp[ids].__str__() + "'", ids)
 
 def oauth_handling(account):
     ''' Sets up the beam OAuth in the config file '''
@@ -29,7 +32,7 @@ def oauth_handling(account):
     beamoauth = authentication.OAuth(client_id, redirect_uri)
 
     # Checks the database if there is a valid OAuth Token
-    if db.get_db('accounts', account)[3] is None:
+    if db.get_db('account_' + account, 'access_token')[1] is None:
 
         #Sets up the OAuth URL to generate Shortcode
         oauth = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=scope)
@@ -53,13 +56,14 @@ def oauth_handling(account):
         # if an OAuth access token is saved to the database then this
         # gets the Time now and the expiry imformation of the OAuth token
         dtn = datetime.now()
-        dte = datetime.strptime(db.get_db('accounts', account)[5], '%Y-%m-%d %H:%M:%S.%f')
+        dte = datetime.strptime(db.get_db('account_' + account, 'expires_in')[1],
+                                '%Y-%m-%d %H:%M:%S.%f')
 
         # Check to see if the OAtuh access token has expired
         if dtn > dte:
             # OAtuh access token has expired then perform a token refresh
             print('Token expired for {acc} account, token refreshing...'.format(acc=account))
-            tmp = beamoauth.check(db.get_db('accounts', account)[4])
+            tmp = beamoauth.check(db.get_db('account_' + account, 'refresh_token')[1])
             token_handling(tmp, account)
 
 def initialize():
@@ -73,8 +77,14 @@ def initialize():
         # Check account access token
         oauth_handling(account)
 
-        # checks user information
-        tmp = db.get_db('accounts', account)
-        if tmp[1] is None or tmp[2] is None or tmp[6] is None:
-            tmp = beamoauth.get_userinfo(tmp[3])
-            db.set_db_userinfo(account, tmp)
+        # checks if user information is present in the database
+        if (db.get_db('account_' + account, 'user_id')[1] is None or
+                db.get_db('account_' + account, 'username')[1] is None or
+                db.get_db('account_' + account, 'channel_id')[1] is None):
+            # get account details: userId, username, channel_id
+            tmp = beamoauth.get_userinfo(db.get_db('account_' + account, 'access_token')[1])
+            user = {'user_id': tmp['channel']['userId'],
+                    'username': tmp['username'],
+                    'channel_id': tmp['channel']['id']}
+            # save date to the database
+            db.set_db_userinfo(account, user)

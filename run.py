@@ -9,9 +9,8 @@
                        Beam.pro and will not be compatible with any other
                        streaming services.
 '''
+
 import handlers
 
 
 handlers.initialize()
-
-

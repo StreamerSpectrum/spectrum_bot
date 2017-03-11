@@ -38,7 +38,8 @@ class OAuth():
             return {'error': False,
                     'access_token': data['access_token'],
                     'refresh_token': data['refresh_token'],
-                    'expires_in' : data['expires_in']}
+                    'expires_in': data['expires_in'],
+                    'token_type': data['token_type']}
 
     def token_refresh(self, code):
         ''' refreshes the access and refresh tokens '''
@@ -49,7 +50,6 @@ class OAuth():
         header = {'Media-Type': 'application/json'}
         # Send request and return the responce
         tmp = requests.post(url=OATH_TOKEN_URL, data=data, headers=header).json()
-
         return self.generate_dict(tmp)
 
     def get_access(self, code):

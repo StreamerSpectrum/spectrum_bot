@@ -20,7 +20,6 @@ def set_db(table, data, row):
 
 def set_db_userinfo(account, data):
     ''' Saves the account information to the database '''
-    data = ("username='{n}', ".format(n=data['username']) +
-            "user_id='{uid}', ".format(uid=data['channel']['id']) +
-            "channel_id='{cid}'".format(cid=data['channel']['userId']))
-    set_db('accounts', data, account)
+    for ids in data:
+        set_db('account_' + account, "data='" + data[ids].__str__() + "'", ids)
+
