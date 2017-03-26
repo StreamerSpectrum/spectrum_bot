@@ -6,7 +6,7 @@ Author: CAPGames
 
 State : **Not a workable state**
 
-Target Platforms : Raspberry Pi, Windows
+Target Platforms : Raspberry Pi (Rasbian), Windows
 
 ## Currently Completed
 * Beam OAuth
