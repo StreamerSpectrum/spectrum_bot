@@ -1,16 +1,11 @@
 #!/usr/bin/env python3.4
+''' main executable file '''
 
-'''
-    Program          : Spectrum Bot
-    Author           : CAPGames
-    Association with : http://beam.pro/team/StreamerSpectrum
+import time
+import handlers as Handler
 
-    Description      : This is a chat and interactive bot for use with:
-                       Beam.pro and will not be compatible with any other
-                       streaming services.
-'''
-
-import handlers
-
-
-handlers.initialize()
+START_TIME = time.time()
+Handler.beamauth('main')
+Handler.beamauth('bot')
+ELAPSED_TIME = time.time() - START_TIME
+print(ELAPSED_TIME)
