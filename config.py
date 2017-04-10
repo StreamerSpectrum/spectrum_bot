@@ -2,6 +2,7 @@
 
 # DO NOT CHANGE THESE VALUES OR THE BOT WILL BREAK
 BEAM_URI = 'https://beam.pro/api/v1/'
+OAUTH_URI = 'https://beam.pro/oauth/authorize?'
 AUTHTOKEN_URI = 'oauth/token'
 USERSCURRENT_URI = 'users/current'
 CHATSCID_URI = 'chats/{cid}'

@@ -1,11 +1,10 @@
-#!/usr/bin/env python3.4
-''' main executable file '''
+#!/usr/bin/env python3
+''' Main program '''
 
 import time
-import handlers as Handler
+from handlers import BeamOAuth
 
 START_TIME = time.time()
-Handler.beamauth('main')
-Handler.beamauth('bot')
+BeamOAuth.initialize()
 ELAPSED_TIME = time.time() - START_TIME
 print(ELAPSED_TIME)

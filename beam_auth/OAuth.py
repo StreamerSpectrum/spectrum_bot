@@ -11,6 +11,9 @@ class OAuth():
     def __init__(self, config):
         self.config = config
 
+    def _buildurl(self, path):
+        return self.config.BEAM_URI + path
+
     def generate(self, code):
         ''' Generates access token information '''
         if code is None:
@@ -25,7 +28,8 @@ class OAuth():
         #Sets up the OAuth URL to generate Shortcode
         oauth = OAuth2Session(self.config.CLIENT_ID, redirect_uri=self.config.REDIRECT_URI,
                               scope=self.config.SCOPE)
-        authorization_url, state = oauth.authorization_url('https://beam.pro/oauth/authorize?')
+        # Forms an authorization URL
+        authorization_url, state = oauth.authorization_url(self.config.OAUTH_URI)
 
         # Opens a new tab in browser for permission agreement and
         # short code retrieval
@@ -52,9 +56,6 @@ class OAuth():
         responce = requests.post(url=self._buildurl(self.config.AUTHTOKEN_URI),
                                  data=data, headers=header).json()
         return self.generate_output(responce)
-
-    def _buildurl(self, path):
-        return self.config.BEAM_URI + path
 
     def generate_refresh(self, code):
         ''' refreshes the access and refresh tokens '''
@@ -95,6 +96,7 @@ class OAuth():
             return {'error': True,
                     'reason': ('DATA ERROR: Authentication data is incorrect, '
                                'please recheck your data')}
+        # if 'error' key exists
         elif 'error' in data:
             # returns error information if cannot authenticate
             if 'error_description' in data:
