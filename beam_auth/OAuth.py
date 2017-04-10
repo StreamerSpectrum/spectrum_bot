@@ -25,11 +25,13 @@ class OAuth():
 
     def generate_new(self):
         ''' Generates shortcode and gets access token from Beam '''
-        #Sets up the OAuth URL to generate Shortcode
-        oauth = OAuth2Session(self.config.CLIENT_ID, redirect_uri=self.config.REDIRECT_URI,
+        # Sets up the OAuth URL to generate Shortcode
+        oauth = OAuth2Session(self.config.CLIENT_ID,
+                              redirect_uri=self.config.REDIRECT_URI,
                               scope=self.config.SCOPE)
         # Forms an authorization URL
-        authorization_url, state = oauth.authorization_url(self.config.OAUTH_URI)
+        authorization_url, state = oauth.authorization_url(
+            self.config.OAUTH_URI)
         state = state
         # Opens a new tab in browser for permission agreement and
         # short code retrieval
@@ -38,7 +40,8 @@ class OAuth():
         # Gets User to input the shortcode
         code = input('Please enter your Shortcode : ')
         while len(code) < 16 or len(code) > 16:
-            print('SHORTCODE ERROR: The shortcode entered is not the correct length\n'
+            print('SHORTCODE ERROR: '
+                  'The shortcode entered is not the correct length\n'
                   '                 please check and re-enter')
             code = input('Please enter your Shortcode : ')
 
@@ -62,7 +65,7 @@ class OAuth():
         # Create Data for request
         data = dict(client_id=self.config.CLIENT_ID, refresh_token=code,
                     grant_type='refresh_token')
-        #crete Header for request
+        # Create Header for request
         header = {'Media-Type': 'application/json'}
         # Send request and return the responce
         responce = requests.post(url=self._buildurl(self.config.AUTHTOKEN_URI),
@@ -78,8 +81,8 @@ class OAuth():
         header = {'Media-Type': 'application/json',
                   'Authorization': 'Bearer ' + code}
         # Get the request and return the responce
-        tmp = requests.get(url=self._buildurl(self.config.USERSCURRENT_URI), data=data,
-                           headers=header).json()
+        url = self._buildurl(self.config.USERSCURRENT_URI)
+        tmp = requests.get(url=url, data=data, headers=header).json()
         # gets the data needed from the infrormation obtained from beam
         responce = {'error': False,
                     'user_id': tmp['channel']['userId'],
@@ -105,8 +108,8 @@ class OAuth():
                         'reason': 'API ERROR: ' + data['error_description']}
             else:
                 return {'error': True,
-                        'reason': ('There has been an error caused during authentication, '
-                                   'code is no longer valid')}
+                        'reason': ('There has been an error caused during '
+                                   'authentication, code is no longer valid')}
         else:
             # returns token data in dictionary type
             return {'error': False,
