@@ -30,7 +30,7 @@ class OAuth():
                               scope=self.config.SCOPE)
         # Forms an authorization URL
         authorization_url, state = oauth.authorization_url(self.config.OAUTH_URI)
-
+        state = state
         # Opens a new tab in browser for permission agreement and
         # short code retrieval
         webbrowser.open_new(authorization_url)
@@ -87,7 +87,8 @@ class OAuth():
                     'channel_id': tmp['channel']['id']}
         return responce
 
-    def generate_output(self, data):
+    @classmethod
+    def generate_output(cls, data):
         ''' generates a responce as a dict depending on the data '''
 
         # If the data is False

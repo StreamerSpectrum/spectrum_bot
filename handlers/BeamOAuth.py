@@ -13,7 +13,7 @@ def beamauth(account):
     beam_auth = OAuth.OAuth(CONFIG)
 
     # Checks the database if there is a valid OAuth Token
-    if db.get_db('account_' + account, 'access_token')[1] is None:        
+    if db.get_db('account_' + account, 'access_token')[1] is None:
         # generate shortcode and get access token if shortcode is correct
         beam_data = beam_auth.generate(None)
         # pass on informaion to check if any errors
